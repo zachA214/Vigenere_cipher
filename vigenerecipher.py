@@ -10,47 +10,44 @@ def check_python_version():
     else:
         print("Python 3.x detected. Proceeding...")
 
-def within_range(value, upperbound, lowerbound):
-    if(value <= upperbound and value >= lowerbound):
+def within_range(value, lowerbound, upperbound):
+    if value <= upperbound and value >= lowerbound:
         return True
     return False
 
-def generate_key(msg, key):
-    key = list(key)
-    if len(msg) == len(key):
-        return key
-    else:
-        for i in range(len(msg) - len(key)):
-            key.append(key[i % len(key)])
-    return "".join(key)
-
-def encrypt_vigenere(msg, key):
-    encrypted_text = []
-    key = generate_key(msg, key)
-    for i in range(len(msg)):
-        char = msg[i]
-        if char.isupper():
-            encrypted_char = chr((ord(char) + ord(key[i]) - 2 * ord('A')) % 26 + ord('A'))
-        elif char.islower():
-            encrypted_char = chr((ord(char) + ord(key[i]) - 2 * ord('a')) % 26 + ord('a'))
+def vingenere_encrypt(ciphertext, key):
+    plaintext = ""
+    key = key.upper()
+    key_length = len(key)
+    ciphertext = ciphertext.upper()
+    keyIndex = 0 #this is here because using i to determine shift
+    #gets messed up because of the existence of many spaces
+    for i, char in enumerate(ciphertext):
+        if char.isalpha():
+            shift = ord(key[keyIndex % key_length]) - ord('A')
+            shifted = (ord(char) - ord('A') + shift) % 26
+            plaintext += chr(shifted + ord('A'))
+            keyIndex += 1
         else:
-            encrypted_char = char
-        encrypted_text.append(encrypted_char)
-    return "".join(encrypted_text)
+            plaintext += char
+    return plaintext
 
-def decrypt_vigenere(msg, key):
-    decrypted_text = []
-    key = generate_key(msg, key)
-    for i in range(len(msg)):
-        char = msg[i]
-        if char.isupper():
-            decrypted_char = chr((ord(char) - ord(key[i]) + 26) % 26 + ord('A'))
-        elif char.islower():
-            decrypted_char = chr((ord(char) - ord(key[i]) + 26) % 26 + ord('a'))
+def vingenere_decrypt(ciphertext, key):
+    plaintext = ""
+    key = key.upper()
+    key_length = len(key)
+    ciphertext = ciphertext.upper()
+    keyIndex = 0 #this is here because using i to determine shift
+    #gets messed up because of the existence of many spaces
+    for i, char in enumerate(ciphertext):
+        if char.isalpha():
+            shift = ord(key[keyIndex % key_length]) - ord('A')
+            shifted = (ord(char) - ord('A') - shift) % 26
+            plaintext += chr(shifted + ord('A'))
+            keyIndex += 1
         else:
-            decrypted_char = char
-        decrypted_text.append(decrypted_char)
-    return "".join(decrypted_text)
+            plaintext += char
+    return plaintext
 
 
 plaintext = ""
@@ -68,13 +65,28 @@ print("3. Encrypt")
 menuOption = input("Select Option ")
 
 # Input validation, check if user input is within range and loop if not
-while(menuOption.isdigit(menuOption) and menuOption):
-    key_check = input(key_check + " is not a valid input, please enter y/n ")
-print("ok you said " + key_check)
+while not (menuOption.isdigit() and within_range(int(menuOption), 1, 3)):
+    menuOption = input(menuOption + " is not a valid input, please enter a value from 1 - 3 ")
+print("\nok you said " + menuOption)
+if menuOption == "1":
+    #Decrypt given a key
+    ciphertext = input("Enter ciphertext ")
+    key = input("Enter key ")
+    plaintext = vingenere_decrypt(ciphertext, key)
+    print(f"Ciphertext: {ciphertext}\n")
+    print(f"Key: {key}\n")
+    print(f"Plaintext: {plaintext}\n")
+elif menuOption == "2":
+    #Decrypt, but need to find key
+    print('1')
+elif menuOption == "3":
+    #Encrypt given a key
+    plaintext = input("Enter plaintext ")
+    key = input("Enter key ")
+    ciphertext = vingenere_encrypt(plaintext, key)
+    print(f"Plaintext: {plaintext}\n")
+    print(f"Key: {key}\n")
+    print(f"Ciphertext: {ciphertext}\n")
 
 
-ciphertext = encrypt_vigenere(plaintext, key)
-print(f"Encrypted Text: {ciphertext}")
 
-plaintext = decrypt_vigenere(ciphertext, key)
-print(f"Decrypted Text: {plaintext}")
