@@ -1,7 +1,5 @@
 import sys
 
-# encrypt_vigenere, decrypt_vigenere, and generate key functions provided by https://www.geeksforgeeks.org/vigenere-cipher/
-
 def check_python_version():
     print("Detecting Python version")
     # Check if the Python version is 3.x
@@ -78,7 +76,10 @@ if menuOption == "1":
     print(f"Plaintext: {plaintext}\n")
 elif menuOption == "2":
     #Decrypt, but need to find key
-    print('1')
+    ciphertext = input("Enter ciphertext: ")
+    print(f"Ciphertext: {ciphertext}\n")
+    print(f"Key: {key}\n")
+    print(f"Plaintext: {plaintext}\n")
 elif menuOption == "3":
     #Encrypt given a key
     plaintext = input("Enter plaintext ")
